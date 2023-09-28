@@ -16,7 +16,7 @@ class CryptoStealMod(loader.Module):
     """Автоматически активирует проверки криптоботов (и некоторых других ботов)."""
 
     # Строки для локализации
- strings = {
+    strings = {
     "name": "CryptoSteal",
     "disabled": "❌ Отключено",
     "enabled": "✅ Включено",
