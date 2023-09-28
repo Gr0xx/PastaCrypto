@@ -22,7 +22,6 @@ class CryptoStealMod(loader.Module):
         "name": "CryptoSteal",
         "disabled": "❌ Отключено",
         "enabled": "✅ Включено",
-        ...
     }
 
     # Конфигурационные параметры модуля
@@ -34,7 +33,6 @@ class CryptoStealMod(loader.Module):
                 lambda: self.strings("config_status"),
                 validator=loader.validators.Boolean()
             ),
-            ...
         )
         self.cached_entities = {}  # Кэш для хранения сущностей
 
