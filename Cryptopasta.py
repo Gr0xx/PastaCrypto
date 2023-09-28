@@ -19,24 +19,24 @@ class CryptoStealMod(loader.Module):
 
     # Строки для локализации
   strings = {
-        "name": "CryptoSteal",
-        "disabled": "<emoji document_id=5260342697075416641>❌</emoji> Disabled",
-        "enabled": "<emoji document_id=5206607081334906820>✅</emoji> Enabled",
-        "status_now": "<emoji document_id=5449687343931859785>🤑</emoji> Crypto-Steal was <b>{}</b>!",
-        "config_status": "Are we ready to steal?",
-        "config_delay": (
-            "How long to wait before check activation? (in seconds) (needed to prevent"
-            " moments when cryptobot didnt create the check yet)"
-        ),
-        "config_allow_other_bots": "If disabled i will only steal checks by Trusted Bots",
-        "config_use_asset_chat": "If disabled the 'crypto-steal' chat will not be used",
-        "config_trusted_bots": "Trusted Bots to steal from even if allow_other_bots is False (lowercase username)",
-        "cant_create_asset_chat": "😢 The asset chat is not created, for some reason.",
-        "asset_chat_got_check": (
-            "☘️ Hopefully got a new check!\n🔗 Here is the link to it: {u1}?start={u2} or <code>/start {u2}</code> in {u1}"
-            '\n\n<a href="{link}">🔗 Message</a>'
-        ),
-    }
+    "name": "CryptoSteal",
+    "disabled": "<emoji document_id=5260342697075416641>❌</emoji> Disabled",
+    "enabled": "<emoji document_id=5206607081334906820>✅</emoji> Enabled",
+    "status_now": "<emoji document_id=5449687343931859785>🤑</emoji> Crypto-Steal was <b>{}</b>!",
+    "config_status": "Are we ready to steal?",
+    "config_delay": (
+        "How long to wait before check activation? (in seconds) (needed to prevent"
+        " moments when cryptobot didnt create the check yet)"
+    ),
+    "config_allow_other_bots": "If disabled i will only steal checks by Trusted Bots",
+    "config_use_asset_chat": "If disabled the 'crypto-steal' chat will not be used",
+    "config_trusted_bots": "Trusted Bots to steal from even if allow_other_bots is False (lowercase username)",
+    "cant_create_asset_chat": "😢 The asset chat is not created, for some reason.",
+    "asset_chat_got_check": (
+        "☘️ Hopefully got a new check!\n🔗 Here is the link to it: {u1}?start={u2} or <code>/start {u2}</code> in {u1}"
+        '\n\n<a href="{link}">🔗 Message</a>'
+    ),
+}
 
     strings_ru = {
         "disabled": "<emoji document_id=5260342697075416641>❌</emoji> Выключен",
