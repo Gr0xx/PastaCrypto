@@ -22,6 +22,7 @@ class CryptoStealMod(loader.Module):
         "name": "CryptoSteal",
         "disabled": "❌ Отключено",
         "enabled": "✅ Включено",
+        # ...
     }
 
     # Конфигурационные параметры модуля
