@@ -8,29 +8,46 @@ from .. import loader, utils
 import logging
 import asyncio
 
-version = (1, 3, 2)
-logger = logging.getLogger(name)
+__version__ = (1, 3, 2)
+logger = logging.getLogger(__name__)
+
 
 @loader.tds
 class CryptoStealMod(loader.Module):
-    """Автоматически активирует проверки криптоботов (и некоторых других ботов)."""
+    """Automatically claims cryptobot (and some other bots) checks. Special thanks to @toxicuse"""
 
-    # Строки для локализации
     strings = {
         "name": "CryptoSteal",
-        "disabled": "❌ Отключено",
-        "enabled": "✅ Включено",
-        "status_now": "🤑 Crypto-Steal был <b>{}</b>!",
-        "config_status": "Готовы ли мы тырить?",
+        "disabled": "❌ Disabled",
+        "enabled": "✅ Enabled",
+        "status_now": "🤑 Crypto-Steal was <b>{}</b>!",
+        "config_status": "Are we ready to steal?",
         "config_delay": (
-            "Сколько ждать перед активацией чека? (в секундах) (нужно, чтобы предотвратить моменты, когда криптобот еще не создал чек)"
+            "How long to wait before check activation? (in seconds) (needed to prevent"
+            " moments when cryptobot didnt create the check yet)"
         ),
-        "config_allow_other_bots": "Если отключено, я буду получать чеки только от Доверенных Ботов",
-        "config_use_asset_chat": "Если отключено, чат 'crypto-steal' не будет использоваться",
-        "config_trusted_bots": "Доверенные Боты, от которых я буду получать чеки, даже если allow_other_bots равен False (имя пользователя в нижнем регистре)",
-        "cant_create_asset_chat": "😢 Чат Crypto-Steal не создан, по какой-то причине.",
+        "config_allow_other_bots": "If disabled, I will only steal checks by Trusted Bots",
+        "config_use_asset_chat": "If disabled, the 'crypto-steal' chat will not be used",
+        "config_trusted_bots": "Trusted Bots to steal from even if allow_other_bots is False (lowercase username)",
+        "cant_create_asset_chat": "😢 The asset chat is not created, for some reason.",
         "asset_chat_got_check": (
-            "☘️ Надеюсь, получен новый чек!\n🔗 Вот ссылка на него: {u1}?start={u2} или <code>/start {u2}</code> в {u1}"
+            "☘️ Hopefully got a new check!\n🔗 Here is the link to it: {u1}?start={u2} or <code>/start {u2}</code> in {u1}"
+            '\n\n<a href="{link}">🔗 Message</a>'
+        ),
+    }
+
+    strings_ru = {
+        "disabled": "❌ Выключен",
+        "enabled": "✅ Включён",
+        "status_now": "🤑 Crypto-Steal теперь <b>{}</b>!",
+        "config_status": "Готовы ли мы тырить?",
+        "config_delay": "Сколько секунд ждать перед активацией чека? (нужно чтобы не было таким случаев когда криптобот ещё не создал чек)",
+        "config_allow_other_bots": "Если выключено, то я буду тырить только чеки Доверенных Ботов",
+        "config_use_asset_chat": "Если выключено, то чат 'crypto-steal' не будет использован",
+        "config_trusted_bots": "Доверенные Боты, из которых я буду тырить даже если allow_other_bots на False (ник маленькими буквами)",
+        "cant_create_asset_chat": "😢 Не удалось создать чат Crypto-Steal, почему-то.",
+        "asset_chat_got_check": (
+            "☘️ Надеюсь получил новый чек!\n🔗 Вот ссылка на него: {u1}?start={u2} или <code>/start {u2}</code> в {u1}"
             '\n\n<a href="{link}">🔗 Сообщение</a>'
         ),
     }
@@ -87,11 +104,11 @@ class CryptoStealMod(loader.Module):
 
         if not self.asset_chat:
             await self.inline.bot.send_message(self._client.tg_id, self.strings("cant_create_asset_chat"))
-            logger.error("Не удалось создать чат Crypto-Steal")
+            logger.error("Can't create asset chat")
 
     @loader.watcher(only_messages=True, only_inline=True)
     async def watcher(self, message):
-        already_claimed: list = self.db.get(__name__, "already_claimed", [])
+        already_claimed: list = await self.db.get(__name__, "already_claimed", [])
 
         if not self.config["status"]:
             return
@@ -101,7 +118,7 @@ class CryptoStealMod(loader.Module):
         url = message.buttons[0][0].url.split("?start=")
 
         if url[1] in already_claimed:
-            logging.debug("Этот чек уже активирован")
+            logging.debug("This check is already activated")
             return
 
         user = await self.client.get_entity(url[0])
@@ -109,7 +126,7 @@ class CryptoStealMod(loader.Module):
         link = f"https://t.me/c/{str(message.chat_id).replace('-100', '')}/{message.id}"
 
         if (user.username.lower() not in self.config["trusted_bots"]) and (not self.config["allow_other_bots"]):
-            return logger.debug(f"Игнорируется недоверенный бот (@{user.username})")
+            return logger.debug(f"Ignoring not trusted bot (@{user.username})")
 
         # https://t.me/c/1955174868/656
         await message.mark_read()
@@ -117,10 +134,10 @@ class CryptoStealMod(loader.Module):
         await asyncio.sleep(self.config["delay"])
 
         await self.client.send_message(user.id, f"/start {url[1]}")
-        logger.debug("Отправлен запрос на получение чека, надеюсь, мы его получили")
+        logger.debug("Sent check get request, hopefully we got it")
 
         already_claimed.append(url[1])
-        self.db.set(__name__, "already_claimed", already_claimed)
+        await self.db.set(__name__, "already_claimed", already_claimed)
 
         if self.asset_chat and self.config["use_asset_chat"]:
             await self.inline.bot.send_message(
@@ -130,7 +147,7 @@ class CryptoStealMod(loader.Module):
             )
 
     async def cryptostealcmd(self, message):
-        """Переключить Crypto-Steal"""
+        """Toggle Crypto-Steal"""
 
         self.config["status"] = not self.config["status"]
 
